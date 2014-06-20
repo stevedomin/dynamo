@@ -108,15 +108,15 @@ defmodule Dynamo.Connection.TestTest do
   test :fetch do
     conn = conn(:POST, "/foo/bar", "foobar").fetch([:cookies, :body])
     assert conn.req_body == "foobar"
-    assert conn.req_cookies["foo"] == nil
+    assert conn.req_cookies[:foo] == nil
   end
 
   ## Cookies
 
   test :req_cookies do
     conn = conn(:GET, "/").put_req_cookie(:foo, "bar").put_req_cookie(:baz, "bat").fetch(:cookies)
-    assert conn.req_cookies["foo"] == "bar"
-    assert conn.req_cookies["baz"] == "bat"
+    assert conn.req_cookies[:foo] == "bar"
+    assert conn.req_cookies[:baz] == "bat"
     conn
   end
 
