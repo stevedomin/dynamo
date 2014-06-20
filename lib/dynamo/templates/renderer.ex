@@ -3,7 +3,7 @@ defmodule Dynamo.Templates.Renderer do
   @slots 1_000_000
   @max_attempts 1_000
 
-  use GenServer.Behaviour
+  use GenServer
   alias Dynamo.Template, as: Template
 
   @doc """

@@ -69,7 +69,7 @@ defmodule Dynamo.HTTP.RenderTest do
 
   test "uses app prelude" do
     conn = get("/prelude.html").send
-    assert conn.sent_body == (?H |> integer_to_binary)
+    assert conn.sent_body == (?H |> Integer.to_string)
     assert conn.resp_content_type == "text/html"
   end
 

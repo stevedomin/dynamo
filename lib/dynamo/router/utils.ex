@@ -1,4 +1,6 @@
-defexception Dynamo.Router.InvalidSpecError, message: "invalid route specification"
+defmodule Dynamo.Router.InvalidSpecError do
+  defexception message: "invalid route specification"
+end
 
 defmodule Dynamo.Router.Utils do
   @moduledoc false
@@ -108,17 +110,17 @@ defmodule Dynamo.Router.Utils do
   # In a given segment, checks if there is a match.
 
   defp segment_match([?:|argument], [], context) do
-    identifier = list_to_atom(argument)
+    identifier = List.to_atom(argument)
     { :identifier, identifier, { identifier, [], context } }
   end
 
   defp segment_match([?*|argument], [], context) do
-    identifier = list_to_atom(argument)
+    identifier = List.to_atom(argument)
     { :glob, identifier, { identifier, [], context } }
   end
 
   defp segment_match([?:|argument], buffer, context) do
-    identifier = list_to_atom(argument)
+    identifier = List.to_atom(argument)
     var = { identifier, [], context }
     expr = quote do
       unquote(binary_from_buffer(buffer)) <> unquote(var)
@@ -128,7 +130,7 @@ defmodule Dynamo.Router.Utils do
 
   defp segment_match([?*|argument], buffer, context) do
     underscore = {:_, [], context}
-    identifier = list_to_atom(argument)
+    identifier = List.to_atom(argument)
     var = { identifier, [], context }
     expr = quote do
       [unquote(binary_from_buffer(buffer)) <> unquote(underscore) | unquote(underscore)] = unquote(var)
@@ -145,11 +147,11 @@ defmodule Dynamo.Router.Utils do
   end
 
   defp list_split(bin) do
-    for segment <- String.split(bin, "/"), segment != "", do: List.from_char_data!(segment)
+    for segment <- String.split(bin, "/"), segment != "", do: String.to_char_list(segment)
   end
 
   defp binary_from_buffer(buffer) do
-    iodata_to_binary(Enum.reverse(buffer))
+    IO.iodata_to_binary(Enum.reverse(buffer))
   end
 
   def is_function_exported?(module, function, arity) do

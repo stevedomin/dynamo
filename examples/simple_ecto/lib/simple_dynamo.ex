@@ -15,7 +15,7 @@ defmodule SimpleEcto.Dynamo do
 end
 
 defmodule SimpleEcto do
-  use Application.Behaviour
+  use Application
 
   @doc """
   The application callback used to start this
@@ -27,7 +27,7 @@ defmodule SimpleEcto do
 end
 
 defmodule SimpleEcto.Sup do
-  use Supervisor.Behaviour
+  use Supervisor
 
   def start_link do
     :supervisor.start_link({ :local, __MODULE__ }, __MODULE__, [])

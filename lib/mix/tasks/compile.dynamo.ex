@@ -84,7 +84,7 @@ defmodule Mix.Tasks.Compile.Dynamo do
       end
 
       compiled = compile_files to_compile, compile_path, root
-      compiled = for { mod, _ } <- compiled, do: atom_to_binary(mod)
+      compiled = for { mod, _ } <- compiled, do: Atom.to_string(mod)
 
       Mix.Utils.write_manifest(manifest, compiled)
       compile_templates mod, dynamo[:compiled_templates], templates, compile_path

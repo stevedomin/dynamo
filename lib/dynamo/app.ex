@@ -1,7 +1,7 @@
 defmodule Dynamo.App do
   @moduledoc false
 
-  use Application.Behaviour
+  use Application
 
   @doc """
   Manually start the application when such is

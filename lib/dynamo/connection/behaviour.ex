@@ -13,7 +13,7 @@ defmodule Dynamo.Connection.Behaviour do
   * resp_charset - `"utf-8"`
   * resp_content_type - `nil`
   * resp_cookies - `[]`
-  * resp_headers - an empty binary dict
+  * resp_headers - an empty map
   * state - `:unset`
   * status - `nil`
   * script_name_segments - an empty list
@@ -53,7 +53,7 @@ defmodule Dynamo.Connection.Behaviour do
       resp_charset: "utf-8",
       resp_cookies: [],
       resp_content_type: nil,
-      resp_headers: Binary.Dict.new([{"cache-control", "max-age=0, private, must-revalidate"}]),
+      resp_headers: Macro.escape(%{ "cache-control" => "max-age=0, private, must-revalidate" }),
       route_params: [],
       state: :unset,
       status: nil,
@@ -130,7 +130,7 @@ defmodule Dynamo.Connection.Behaviour do
 
       @doc false
       def route_params(new, connection(params: params, route_params: route_params) = conn) do
-        connection(conn, route_params: route_params ++ new, params: Binary.Dict.merge(params, new))
+        connection(conn, route_params: route_params ++ new, params: Map.merge(params, new))
       end
 
       @doc false
@@ -297,12 +297,12 @@ defmodule Dynamo.Connection.Behaviour do
 
       @doc false
       def put_resp_header(key, value, connection(resp_headers: resp_headers) = conn) do
-        connection(conn, resp_headers: Binary.Dict.put(resp_headers, key, to_string(value)))
+        connection(conn, resp_headers: Map.put(resp_headers, key, to_string(value)))
       end
 
       @doc false
       def delete_resp_header(key, connection(resp_headers: resp_headers) = conn) do
-        connection(conn, resp_headers: Binary.Dict.delete(resp_headers, key))
+        connection(conn, resp_headers: Map.delete(resp_headers, key))
       end
 
       # Callbacks

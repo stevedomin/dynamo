@@ -1,7 +1,7 @@
 defmodule Dynamo.Static do
   @moduledoc false
 
-  use GenServer.Behaviour
+  use GenServer
 
   @doc """
   Looks up a static asset in the given Dynamo. If the
@@ -72,7 +72,7 @@ defmodule Dynamo.Static do
     case File.stat(Path.join(config.root, path)) do
       { :ok, %File.Stat{mtime: mtime, type: type} } when type != :directory and is_tuple(mtime) ->
         seconds = :calendar.datetime_to_gregorian_seconds(mtime)
-        Path.join(config.route, [path, ??, integer_to_list(seconds)])
+        Path.join(config.route, [path, ??, Integer.to_char_list(seconds)])
       _ ->
         Path.join(config.route, path)
     end

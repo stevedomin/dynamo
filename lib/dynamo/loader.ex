@@ -12,7 +12,7 @@ defmodule Dynamo.Loader do
   dynamos in the node.
   """
 
-  use GenServer.Behaviour
+  use GenServer
 
   @doc """
   Enables the reloader in the given process and returns
@@ -56,7 +56,7 @@ defmodule Dynamo.Loader do
   that the related file was required).
   """
   def load_missing(module) do
-    case atom_to_binary(module) do
+    case Atom.to_string(module) do
       "Elixir." <> _ ->
         path = Mix.Utils.underscore(module) <> ".ex"
         dirs = :gen_server.call(__MODULE__, :paths)

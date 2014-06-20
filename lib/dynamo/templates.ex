@@ -21,7 +21,9 @@ defmodule Dynamo.Template do
   handler: nil, updated_at: nil, extra: nil, ref: nil, finder: nil]
 end
 
-defexception Dynamo.TemplateNotFound, query: nil, paths: nil do
+defmodule Dynamo.TemplateNotFound do
+  defexception query: nil, paths: nil
+
   def message(exception) do
     "Could not find template #{inspect exception.query} in any of the paths: #{inspect exception.paths}"
   end
