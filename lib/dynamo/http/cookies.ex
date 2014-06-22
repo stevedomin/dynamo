@@ -22,7 +22,10 @@ defmodule Dynamo.HTTP.Cookies do
     key = to_string(key)
     case List.keyfind(conn.resp_cookies, key, 0) do
       { ^key, value, _ } -> value
-      nil -> conn.req_cookies[String.to_atom(key)]
+      nil -> case conn.req_cookies[String.to_atom(key)] do
+                nil -> conn.req_cookies[key]
+                value -> value
+                end
     end
   end
 

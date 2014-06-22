@@ -195,7 +195,11 @@ defmodule Dynamo.Cowboy.Connection do
     { query_string, req } = R.qs req
     params = Dynamo.Connection.QueryParser.parse(query_string)
     { params, req } = Dynamo.Cowboy.BodyParser.parse(params, req)
-    connection(conn, req: req, params: merge_route_params(params, route_params))
+    connection(conn, req: req, params: atomize_keys(merge_route_params(params, route_params)))
+  end
+
+  defp atomize_keys(map) do
+    Enum.into(map, %{}, fn {k,v} -> {String.to_atom(k), v} end)
   end
 
   def fetch(:cookies, connection(req: req, req_cookies: nil) = conn) do
