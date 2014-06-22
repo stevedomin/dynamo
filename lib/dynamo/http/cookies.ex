@@ -10,7 +10,7 @@ defmodule Dynamo.HTTP.Cookies do
   """
   def get_cookies(conn) do
     Enum.reduce conn.resp_cookies, conn.req_cookies, fn({ key, value, _opts }, acc) ->
-      Binary.Dict.put(acc, key, value)
+      Map.put(acc, String.to_atom(key), value)
     end
   end
 
@@ -22,7 +22,10 @@ defmodule Dynamo.HTTP.Cookies do
     key = to_string(key)
     case List.keyfind(conn.resp_cookies, key, 0) do
       { ^key, value, _ } -> value
-      nil -> conn.req_cookies[key]
+      nil -> case conn.req_cookies[String.to_atom(key)] do
+                nil -> conn.req_cookies[key]
+                value -> value
+                end
     end
   end
 

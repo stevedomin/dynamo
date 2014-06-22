@@ -40,7 +40,7 @@ defmodule Dynamo.Filters.StaticTest do
   end
 
   test "serves the file with a urlencoded filename" do
-    conn = get("/public/fixtures/static/file+with%20spaces.txt")
+    conn = get("/public/fixtures/static/file%20with%20spaces.txt")
     assert conn.status == 200
     assert conn.sent_body == "HELLO"
     assert conn.resp_headers["content-type"]  == "text/plain"

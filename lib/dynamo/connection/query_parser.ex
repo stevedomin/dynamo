@@ -1,5 +1,7 @@
 defmodule Dynamo.Connection.QueryParser do
-  defexception ParseError, message: nil
+  defmodule ParseError do
+    defexception [message: nil]
+  end
 
   require Record
 
@@ -29,17 +31,17 @@ defmodule Dynamo.Connection.QueryParser do
 
   @doc """
   Parses a raw query string, decodes it and returns
-  a `Binary.Dict` containing nested hashes.
+  a map containing nested hashes.
   """
-  def parse(query, dict \\ Binary.Dict.new)
+  def parse(query, map \\ Map.new)
 
-  def parse("", dict) do
-    dict
+  def parse("", map) do
+    map
   end
 
-  def parse(query, dict) do
+  def parse(query, map) do
     decoder = URI.query_decoder(query)
-    Enum.reduce(Enum.reverse(decoder), dict, &reduce(&1, &2))
+    Enum.reduce(Enum.reverse(decoder), map, &reduce(&1, &2))
   end
 
   @doc """
@@ -69,8 +71,8 @@ defmodule Dynamo.Connection.QueryParser do
   # We always assign the value in the last segment.
   # `age=17` would match here.
   defp assign_parts([key], acc, value) do
-    Binary.Dict.update(acc, key, value, fn
-      x when is_list(x) or Record.record?(x, Binary.Dict) ->
+    Map.update(acc, key, value, fn
+      x when is_list(x) or is_map(x) ->
         raise ParseError, message: "expected string at #{key}"
       x -> x
     end)
@@ -82,33 +84,33 @@ defmodule Dynamo.Connection.QueryParser do
   # reverse order.
   defp assign_parts([key,""|t], acc, value) do
     current =
-      case Binary.Dict.get(acc, key, []) do
+      case Map.get(acc, key, []) do
         current when is_list(current) -> current
         _   -> raise ParseError, message: "expected list at #{key}"
       end
 
     if value = assign_list_parts(t, value) do
-      Binary.Dict.put(acc, key, [value|current])
+      Map.put(acc, key, [value|current])
     else
-      Binary.Dict.put(acc, key, current)
+      Map.put(acc, key, current)
     end
   end
 
   # The current segment is a parent segment of a
-  # dict. We need to create a dictionary and then
+  # map. We need to create a map and then
   # continue looping.
   defp assign_parts([key|t], acc, value) do
     child =
-      case Binary.Dict.get(acc, key) do
-        current when Record.record?(current, Binary.Dict) -> current
-        nil -> Binary.Dict.new
-        _   -> raise ParseError, message: "expected dict at #{key}"
+      case Map.get(acc, key) do
+        current when is_map(current) -> current
+        nil -> Map.new
+        _   -> raise ParseError, message: "expected map at #{key}"
       end
 
     value = assign_parts(t, child, value)
-    Binary.Dict.put(acc, key, value)
+    Map.put(acc, key, value)
   end
 
   defp assign_list_parts([], value), do: value
-  defp assign_list_parts(t, value),  do: assign_parts(t, Binary.Dict.new, value)
+  defp assign_list_parts(t, value),  do: assign_parts(t, Map.new, value)
 end

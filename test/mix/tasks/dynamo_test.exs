@@ -31,7 +31,7 @@ defmodule Mix.Tasks.DynamoTest do
       assert_file ".gitignore"
 
       assert_file "lib/my_app.ex", fn(file) ->
-        assert file =~ ~r(use Application.Behaviour)
+        assert file =~ ~r(use Application)
       end
 
       assert_file "lib/my_app/dynamo.ex", fn(file) ->

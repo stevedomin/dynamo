@@ -195,17 +195,21 @@ defmodule Dynamo.Cowboy.Connection do
     { query_string, req } = R.qs req
     params = Dynamo.Connection.QueryParser.parse(query_string)
     { params, req } = Dynamo.Cowboy.BodyParser.parse(params, req)
-    connection(conn, req: req, params: merge_route_params(params, route_params))
+    connection(conn, req: req, params: atomize_keys(merge_route_params(params, route_params)))
+  end
+
+  defp atomize_keys(map) do
+    Enum.into(map, %{}, fn {k,v} -> {String.to_atom(k), v} end)
   end
 
   def fetch(:cookies, connection(req: req, req_cookies: nil) = conn) do
     { cookies, req } = R.cookies req
-    connection(conn, req: req, req_cookies: Binary.Dict.new(cookies))
+    connection(conn, req: req, req_cookies: Enum.into(cookies, %{}))
   end
 
   def fetch(:headers, connection(req: req, req_headers: nil) = conn) do
     { headers, req } = R.headers req
-    connection(conn, req: req, req_headers: Binary.Dict.new(headers))
+    connection(conn, req: req, req_headers: Enum.into(headers, %{}))
   end
 
   # The given aspect was already loaded.
@@ -223,7 +227,7 @@ defmodule Dynamo.Cowboy.Connection do
   ## Helpers
 
   defp merge_route_params(params, []), do: params
-  defp merge_route_params(params, route_params), do: Binary.Dict.merge(params, route_params)
+  defp merge_route_params(params, route_params), do: Map.merge(params, route_params)
 
   defp split_path(path) do
     case :binary.split(path, "/", [:global, :trim]) do

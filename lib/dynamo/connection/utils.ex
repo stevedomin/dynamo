@@ -69,7 +69,7 @@ defmodule Dynamo.Connection.Utils do
   merged headers with cookies headers.
   """
   def merge_resp_headers(headers, cookies) do
-    Enum.reduce cookies, Binary.Dict.to_list(headers), fn({ key, value, opts }, acc) ->
+    Enum.reduce cookies, Map.to_list(headers), fn({ key, value, opts }, acc) ->
       [{ "set-cookie", cookie_header(key, value, opts) }|acc]
     end
   end
@@ -94,7 +94,7 @@ defmodule Dynamo.Connection.Utils do
     if max_age = options[:max_age] do
       time = options[:universal_time] || :calendar.universal_time
       time = add_seconds(time, max_age)
-      header = header <> "; expires=" <> rfc2822(time) <> "; max-age=" <> integer_to_binary(max_age)
+      header = header <> "; expires=" <> rfc2822(time) <> "; max-age=" <> Integer.to_string(max_age)
     end
 
     if options[:secure] do
@@ -113,7 +113,7 @@ defmodule Dynamo.Connection.Utils do
   end
 
   defp pad(number) do
-    integer_to_binary(number)
+    Integer.to_string(number)
   end
 
   defp rfc2822({ { year, month, day } = date, { hour, minute, second } }) do
@@ -123,7 +123,7 @@ defmodule Dynamo.Connection.Utils do
     padded_hour   = pad(hour)
     padded_minute = pad(minute)
     padded_second = pad(second)
-    binary_year   = integer_to_binary(year)
+    binary_year   = Integer.to_string(year)
 
     weekday_name <> ", " <> padded_day <>
       " " <> month_name <> " " <> binary_year <>

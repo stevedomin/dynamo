@@ -3,7 +3,7 @@ defmodule Dynamo.Templates.Renderer do
   @slots 1_000_000
   @max_attempts 1_000
 
-  use GenServer.Behaviour
+  use GenServer
   alias Dynamo.Template, as: Template
 
   @doc """
@@ -89,15 +89,15 @@ defmodule Dynamo.Templates.Renderer do
 
   @doc false
   def init(name) do
-    { :ok, { name, Binary.Dict.new() } }
+    { :ok, { name, Map.new } }
   end
 
   @doc false
   def handle_call({ :get_module, identifier, updated_at }, _from, { name, dict }) do
-    case Binary.Dict.get(dict, identifier) do
+    case Map.get(dict, identifier) do
       { module, cached } when updated_at > cached ->
         spawn fn -> purge_module(module) end
-        { :reply, generate_suggestion(name, 0), { name, Binary.Dict.delete(dict, identifier) } }
+        { :reply, generate_suggestion(name, 0), { name, Map.delete(dict, identifier) } }
       { module, _ } ->
         { :reply, { :ok, module }, { name, dict } }
       nil ->
@@ -119,11 +119,11 @@ defmodule Dynamo.Templates.Renderer do
         purge_module(module)
       end
     end
-    { :noreply, { name, Binary.Dict.new } }
+    { :noreply, { name, Map.new } }
   end
 
   def handle_cast({ :put_module, module, identifier, updated_at }, { name, dict }) do
-    { :noreply, { name, Binary.Dict.put(dict, identifier, { module, updated_at }) } }
+    { :noreply, { name, Map.put(dict, identifier, { module, updated_at }) } }
   end
 
   def handle_cast(arg, config) do

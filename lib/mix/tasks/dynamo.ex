@@ -198,7 +198,7 @@ defmodule Mix.Tasks.Dynamo do
 
   embed_template :lib, """
   defmodule <%= @mod %> do
-    use Application.Behaviour
+    use Application
 
     @doc \"""
     The application callback used to start this

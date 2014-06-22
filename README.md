@@ -370,7 +370,7 @@ If we open up the `lib/hello.ex` file, we can see the application callback imple
 
 ```elixir
 defmodule Stacker do
-  use Application.Behaviour
+  use Application
 
   @doc """
   The application callback used to start this
@@ -388,7 +388,7 @@ In case your application has other workers and supervisors, you can create your 
 
 ```elixir
 defmodule Stacker.Supervisor do
-  use Supervisor.Behaviour
+  use Supervisor
 
   # A convenience to start the supervisor
   def start_link(stack) do
@@ -419,7 +419,7 @@ Now all we need to do is to change the `Stacker` module to initialize the new su
 
 ```elixir
 defmodule Stacker do
-  use Application.Behaviour
+  use Application
 
   def start(_type, _args) do
     Stacker.Supervisor.start_link([])

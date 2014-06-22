@@ -1,5 +1,8 @@
 defmodule Dynamo.Filters.ExceptionsTest do
-  defexception UnauthorizedError, message: "Unauthorized" do
+
+  defmodule UnauthorizedError do
+    defexception message: "Unauthorized"
+
     defimpl Dynamo.Exception do
       def status(_exception) do
         401

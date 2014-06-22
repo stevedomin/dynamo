@@ -12,7 +12,7 @@ defmodule Dynamo.Cowboy.ConnectionTest do
   end
 
   def service(conn) do
-    function = binary_to_atom hd(conn.path_segments)
+    function = String.to_atom hd(conn.path_segments)
     apply __MODULE__, function, [conn]
   rescue
     exception ->
@@ -429,7 +429,11 @@ defmodule Dynamo.Cowboy.ConnectionTest do
   end
 
   test :inspect do
-    assert { 200, _, "#Dynamo.Connection<GET /conn_inspect (cowboy)>" } = request :get, "/conn_inspect"
+    {status_code, _, contents} = request :get, "/conn_inspect"
+    assert status_code == 200
+    assert contents =~ "Dynamo.Cowboy.Connection"
+    assert contents =~ "GET"
+    assert contents =~ "/conn_inspect"
   end
 
   def forward_to(conn) do

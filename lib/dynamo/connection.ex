@@ -70,7 +70,7 @@ defmodule Dynamo.Connection do
   @type   conn         :: Dynamo.Connection.t
   @type   body         :: binary
   @type   status       :: non_neg_integer
-  @type   headers      :: Binary.Dict.t
+  @type   headers      :: map
   @type   method       :: binary
   @type   segments     :: [binary]
   @type   charset      :: binary
@@ -91,10 +91,10 @@ defmodule Dynamo.Connection do
 
   @doc """
   Returns the params retrieved from the query string and the request
-  body as a `Binary.Dict`. The parameters need to be explicitly
+  body as a map. The parameters need to be explicitly
   fetched with `conn.fetch(:params)` before using this function.
   """
-  defcallback params(conn) :: Binary.Dict.t | no_return
+  defcallback params(conn) :: map | no_return
 
   @doc """
   Returns the parameters that were set as part of the route
@@ -110,7 +110,7 @@ defmodule Dynamo.Connection do
   defcallback route_params(Keyword.t, conn) :: conn
 
   @doc """
-  Returns the request headers as `Binary.Dict`. Note that duplicated
+  Returns the request headers as a map. Note that duplicated
   entries are removed. The headers need to be explicitly fetched with
   `conn.fetch(:headers)` before using this function. Headers keys are
   all downcased.
@@ -335,10 +335,10 @@ defmodule Dynamo.Connection do
   defcallback state(conn) :: state
 
   @doc """
-  Returns the response headers as `Binary.Dict`.
+  Returns the response headers as a map.
   Header names are all downcased.
   """
-  defcallback resp_headers(conn) :: Binary.Dict.t
+  defcallback resp_headers(conn) :: map
 
   @doc """
   Puts a response header, overriding any previous value.
@@ -356,11 +356,11 @@ defmodule Dynamo.Connection do
   ## Cookies
 
   @doc """
-  Returns the cookies sent in the request as a `Binary.Dict`.
+  Returns the cookies sent in the request as a map.
   Cookies need to be explicitly fetched with `conn.fetch(:cookies)`
   before using this function.
   """
-  defcallback req_cookies(conn) :: Binary.Dict.t | no_return
+  defcallback req_cookies(conn) :: map | no_return
 
   @doc """
   Returns the response cookies as a list of three element tuples
